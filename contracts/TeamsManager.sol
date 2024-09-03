@@ -13,7 +13,7 @@ struct TeamInfo {
 }
 
 interface IERC20 {
-  function transfer(address to, uint256 amount) external;
+  function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
   function balanceOf(address account) external view returns (uint256);
   function getUri() external view returns (string memory);
   function name() external view returns (string memory);
@@ -32,7 +32,7 @@ contract TeamsManager is Administrable {
     require(bytes(_teams[teamName].teamName).length > 0, "Unkown team");
     require(keccak256(abi.encodePacked(_teamLeaders[msg.sender])) != keccak256(abi.encodePacked(teamName)), "Cannot vote for own team");
 
-    _votingTokenContract.transfer(address(0), transferAmount);
+    _votingTokenContract.transferFrom(msg.sender, address(0), transferAmount);
     _teams[teamName].score += transferAmount;
   }
 
