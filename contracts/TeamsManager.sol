@@ -29,10 +29,11 @@ contract TeamsManager is Administrable {
   constructor(address[] memory initialAdmins) Administrable(initialAdmins) {}
 
   function vote(string memory teamName, uint256 transferAmount) public {
+    require(_readyToVote, "Voting has not started yet");
     require(bytes(_teams[teamName].teamName).length > 0, "Unkown team");
     require(keccak256(abi.encodePacked(_teamLeaders[msg.sender])) != keccak256(abi.encodePacked(teamName)), "Cannot vote for own team");
 
-    _votingTokenContract.transferFrom(msg.sender, address(0), transferAmount);
+    _votingTokenContract.transferFrom(msg.sender, address(this), transferAmount);
     _teams[teamName].score += transferAmount;
   }
 
